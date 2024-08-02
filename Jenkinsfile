@@ -6,7 +6,7 @@ pipeline {
         REGION = "us-east-1"
         ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
         IMAGE_NAME = "rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
-        ECR_IMAGE_NAME = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
+        ECR_IMAGE_NAME = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
     }
 
     options {
