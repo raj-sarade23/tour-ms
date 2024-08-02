@@ -5,7 +5,7 @@ pipeline {
         AWS_ACCOUNT_ID = "767397972509"
         REGION = "us-east-1"
         ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
-        IMAGE_NAME = "rajashrisarade/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
+        IMAGE_NAME = "rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
         ECR_IMAGE_NAME = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
     }
 
@@ -42,7 +42,7 @@ pipeline {
         }
         stage('Docker Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CRED', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     echo "Pushing Docker Image to DockerHub: ${env.IMAGE_NAME}"
                     sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
                     sh "docker push ${env.IMAGE_NAME}"
