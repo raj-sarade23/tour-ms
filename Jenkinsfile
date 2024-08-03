@@ -77,7 +77,7 @@ pipeline {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                                sh 'docker login http://13.126.183.17:8085/repository/tour-ms/ -u admin -p ${PASSWORD}'
+                                sh 'docker login http://13.126.183.17:8085/repository/tour-ms/ -u admin --password-stdin ${PASSWORD}'
                                 echo "Push Docker Image to Nexus: In Progress"
                                 sh "docker tag ${env.IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
                                 sh "docker push ${env.NEXUS_IMAGE_NAME}"
@@ -90,7 +90,7 @@ pipeline {
                   stage('Delete Local Docker Images') {
                             steps {
                                 echo "Deleting Local Docker Images: ${env.IMAGE_NAME} ${env.ECR_IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
-                                sh "docker rmi ${env.IMAGE_NAME} ${env.ECR_IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
+                                sh "docker rmi  ${env.IMAGE_NAME} ${env.ECR_IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
                                 echo "Local Docker Images Deletion Completed"
                             }
                         }
