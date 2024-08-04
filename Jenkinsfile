@@ -7,7 +7,7 @@ pipeline {
         ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
         IMAGE_NAME = "rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
         ECR_IMAGE_NAME = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
-        NEXUS_IMAGE_NAME = "13.126.183.17:8085/tour-ms:dev-tour-ms-v.1.${env.BUILD_NUMBER}"
+        NEXUS_IMAGE_NAME = "13.127.86.118:8085/tour-ms:dev-tour-ms-v.1.${env.BUILD_NUMBER}"
     }
 
     options {
@@ -27,6 +27,20 @@ pipeline {
                 echo 'Code Compilation is Completed Successfully!'
             }
         }
+         stage('Sonarqube Code Quality') {
+                    environment {
+                        scannerHome = tool 'sonarqube-scanner'
+                    }
+                    steps {
+                        withSonarQubeEnv('sonar-server') {
+                            sh "${scannerHome}/bin/sonar-scanner"
+                            sh 'mvn sonar:sonar'
+                        }
+                        timeout(time: 10, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
+                }
         stage('Code Package') {
             steps {
                 echo 'Creating WAR Artifact'
@@ -77,7 +91,7 @@ pipeline {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                                sh 'docker login http://13.126.183.17:8085/repository/tour-ms/ -u admin -p ${PASSWORD}'
+                                sh 'docker login http://13.127.86.118:8085/repository/tour-ms/ -u admin -p ${PASSWORD}'
                                 echo "Push Docker Image to Nexus: In Progress"
                                 sh "docker tag ${env.IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
                                 sh "docker push ${env.NEXUS_IMAGE_NAME}"
@@ -90,7 +104,7 @@ pipeline {
                   stage('Delete Local Docker Images') {
                             steps {
                                 echo "Deleting Local Docker Images: ${env.IMAGE_NAME} ${env.ECR_IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
-                                sh "docker rmi -f ${env.IMAGE_NAME} ${env.ECR_IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
+                                sh "docker rmi ${env.IMAGE_NAME} ${env.ECR_IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
                                 echo "Local Docker Images Deletion Completed"
                             }
                         }
