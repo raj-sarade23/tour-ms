@@ -7,7 +7,7 @@ pipeline {
         ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
         IMAGE_NAME = "rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
         ECR_IMAGE_NAME = "${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/rajashri23/tour-ms:tour-ms-v.1.${env.BUILD_NUMBER}"
-        NEXUS_IMAGE_NAME = "35.154.217.248:8085/tour-ms:dev-tour-ms-v.1.${env.BUILD_NUMBER}"
+        NEXUS_IMAGE_NAME = "52.66.89.192:8085/tour-ms:dev-tour-ms-v.1.${env.BUILD_NUMBER}"
     }
 
     options {
@@ -91,7 +91,7 @@ stage('Sonarqube Code Quality') {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                                sh 'docker login http://35.154.217.248:8085/repository/tour-ms/ -u admin -p ${PASSWORD}'
+                                sh 'docker login http://52.66.89.192:8085/repository/tour-ms/ -u admin -p ${PASSWORD}'
                                 echo "Push Docker Image to Nexus: In Progress"
                                 sh "docker tag ${env.IMAGE_NAME} ${env.NEXUS_IMAGE_NAME}"
                                 sh "docker push ${env.NEXUS_IMAGE_NAME}"
